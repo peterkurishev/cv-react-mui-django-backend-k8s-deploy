@@ -9,3 +9,9 @@ dependencies = [
     "django-cors-headers>=4.7.0",
     "gunicorn>=23.0.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.0",
+    "python-lsp-server>=1.12.2",
+]
