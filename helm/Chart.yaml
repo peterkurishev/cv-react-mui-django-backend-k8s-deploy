@@ -1,0 +1,5 @@
+apiVersion: v2
+name: django-react-app
+description: Django + React Helm chart for K3S
+version: 0.1.0
+appVersion: "1.0"

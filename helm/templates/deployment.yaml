@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-react-app
+spec:
+  replicas: {{ .Values.django.replicas }}
+  selector:
+    matchLabels:
+      app: django-react-app
+  template:
+    metadata:
+      labels:
+        app: django-react-app
+    spec:
+      initContainers:
+        # Копируем статику React в общий volume
+        - name: init-react-static
+          image: busybox:1.35
+          command: ['sh', '-c', 'cp -R /app-static/* /shared-static/']
+          volumeMounts:
+            - name: react-static
+              mountPath: /app-static
+            - name: shared-static
+              mountPath: /shared-static
+
+      containers:
+        # Django-контейнер
+        - name: django-app
+          image: {{ .Values.django.image }}
+          ports:
+            - containerPort: {{ .Values.django.port }}
+          env:
+            {{- range $key, $value := .Values.django.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          volumeMounts:
+            - name: shared-static
+              mountPath: /app/static  # Куда монтируем статику React в Django
+
+        # Nginx для React-статики + прокси к Django
+        - name: nginx
+          image: {{ .Values.nginxImage }}
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: shared-static
+              mountPath: /usr/share/nginx/html/static  # Статика React
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: nginx.conf
+
+      volumes:
+        - name: react-static
+          configMap:
+            name: react-static-files
+        - name: shared-static
+          emptyDir: {}
+        - name: nginx-config
+          configMap:
+            name: nginx-config

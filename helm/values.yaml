@@ -1,0 +1,23 @@
+# Django settings
+django:
+  image: your-django-image:latest
+  port: 8000
+  replicas: 2
+  env:
+    SECRET_KEY: "changeme"
+    DEBUG: "false"
+    ALLOWED_HOSTS: "*"
+
+# React settings
+react:
+  buildPath: ./build  # Путь к собранным статическим файлам React
+  nginxImage: nginx:1.23-alpine
+
+# Общие настройки
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  host: your-domain.local

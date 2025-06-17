@@ -1,0 +1,41 @@
+# Конфиг NGINX для раздачи статики React и прокси к Django
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |
+    server {
+      listen 80;
+      server_name localhost;
+
+      # React static files
+      location / {
+        root /usr/share/nginx/html;
+        try_files $uri /index.html;
+      }
+
+      # Django API proxy
+      location /api {
+        proxy_pass http://localhost:{{ .Values.django.port }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+      }
+
+      # Django static files (если используются)
+      location /static/ {
+        alias /usr/share/nginx/html/static/;
+      }
+    }
+
+---
+# Статические файлы React (собираются отдельно)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: react-static-files
+binaryData:
+  {{- $files := .Files.Glob "react-build/**" }}
+  {{- range $path, $bytes := $files }}
+  {{ $path }}: {{ $.Files.Get $path | b64enc }}
+  {{- end }}
