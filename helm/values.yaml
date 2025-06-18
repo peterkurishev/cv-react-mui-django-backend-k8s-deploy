@@ -1,6 +1,6 @@
 # Django settings
 django:
-  image: your-django-image:latest
+  image: cr.selcloud.ru/dswz/backend:latest
   port: 8000
   replicas: 2
   env:
@@ -8,6 +8,7 @@ django:
     DEBUG: "false"
     ALLOWED_HOSTS: "*"
 
+nginxImage: nginx:1.23-alpine
 # React settings
 react:
   buildPath: ./build  # Путь к собранным статическим файлам React
@@ -20,4 +21,4 @@ service:
 
 ingress:
   enabled: true
-  host: your-domain.local
+  host: cv.dswz.ru

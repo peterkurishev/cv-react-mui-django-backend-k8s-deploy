@@ -13,15 +13,14 @@ spec:
         app: django-react-app
     spec:
       initContainers:
-        # Копируем статику React в общий volume
         - name: init-react-static
           image: busybox:1.35
-          command: ['sh', '-c', 'cp -R /app-static/* /shared-static/']
+          command: ['sh', '-c', 'mkdir -p /app-static && cp -R /config-files/* /app-static/']
           volumeMounts:
             - name: react-static
-              mountPath: /app-static
+              mountPath: /config-files
             - name: shared-static
-              mountPath: /shared-static
+              mountPath: /app-static
 
       containers:
         # Django-контейнер

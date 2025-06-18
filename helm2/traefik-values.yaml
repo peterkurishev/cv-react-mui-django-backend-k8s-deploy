@@ -1,0 +1,12 @@
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: peter@kurishev.ru
+      storage: acme.json
+      httpChallenge:
+        entryPoint: web
+      {{- if eq .Values.ingress.tls.letsEncrypt.production "true" }}
+      caServer: https://acme-v02.api.letsencrypt.org/directory
+      {{- else }}
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      {{- end }}

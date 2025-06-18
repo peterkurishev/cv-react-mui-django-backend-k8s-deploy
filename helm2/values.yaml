@@ -1,0 +1,62 @@
+global:
+  prefix: cv-app
+
+backend:
+  replicaCount: 1
+  image:
+    repository: cr.selcloud.ru/dswz/cv-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  containerPort: 8000
+  service:
+    port: 8000
+  readinessProbe:
+    path: /api/health
+    port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 5
+  livenessProbe:
+    path: /api/health
+    port: 8000
+    initialDelaySeconds: 30
+    periodSeconds: 10
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: cr.selcloud.ru/dswz/frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  containerPort: 80
+  service:
+    port: 80
+  readinessProbe:
+    path: /
+    port: 80
+    initialDelaySeconds: 5
+    periodSeconds: 5
+  livenessProbe:
+    path: /
+    port: 80
+    initialDelaySeconds: 10
+    periodSeconds: 10
+
+ingress:
+  enabled: true
+  className: traefik
+  host: cv.dswz.ru  # Укажите ваш домен
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: default-strip-api-prefix@kubernetescrd
+  path: / 
+  tls:
+    enabled: true
+    letsEncrypt:
+      enabled: true
+      email: peter@kurishev.ru  # Email для Let's Encrypt
+      production: false  # true для продакшена, false для теста (staging)
+    
+
+middleware:
+  enabled: true
+  name: strip-api-prefix
+  namespace: default

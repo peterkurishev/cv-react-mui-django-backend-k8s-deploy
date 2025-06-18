@@ -34,8 +34,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: react-static-files
-binaryData:
+data:
   {{- $files := .Files.Glob "react-build/**" }}
   {{- range $path, $bytes := $files }}
-  {{ $path }}: {{ $.Files.Get $path | b64enc }}
+  {{ base $path }}: |
+    {{ $.Files.Get $path | b64dec }}
   {{- end }}
