@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-yrm@y*-^g7x62ixx03&^z64$69q-bc8i0v!tm%dw7&f&5p@fq='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 #FIXME: bad case, there shoulld be POD ip for health / liveness probes
 ALLOWED_HOSTS = ['*']

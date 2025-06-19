@@ -2,30 +2,30 @@ global:
   prefix: cv-app
 
 backend:
-  replicaCount: 1
+  replicaCount: 3
   image:
     repository: cr.selcloud.ru/dswz/cv-backend
-    tag: 0.8.6
+    tag: 0.8.7
     pullPolicy: IfNotPresent
   containerPort: 8000
   service:
     port: 8000
   readinessProbe:
-    path: /message
+    path: /api/message
     port: 8000
     initialDelaySeconds: 10
     periodSeconds: 5
   livenessProbe:
-    path: /message
+    path: /api/message
     port: 8000
     initialDelaySeconds: 30
     periodSeconds: 10
 
 frontend:
-  replicaCount: 1
+  replicaCount: 2
   image:
-    repository: cr.selcloud.ru/dswz/frontend
-    tag: latest
+    repository: cr.selcloud.ru/dswz/cv-frontend
+    tag: 0.8.7
     pullPolicy: IfNotPresent
   containerPort: 80
   service:
