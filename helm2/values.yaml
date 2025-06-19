@@ -5,18 +5,18 @@ backend:
   replicaCount: 1
   image:
     repository: cr.selcloud.ru/dswz/cv-backend
-    tag: latest
+    tag: 0.8.6
     pullPolicy: IfNotPresent
   containerPort: 8000
   service:
     port: 8000
   readinessProbe:
-    path: /api/health
+    path: /message
     port: 8000
     initialDelaySeconds: 10
     periodSeconds: 5
   livenessProbe:
-    path: /api/health
+    path: /message
     port: 8000
     initialDelaySeconds: 30
     periodSeconds: 10
@@ -60,3 +60,13 @@ middleware:
   enabled: true
   name: strip-api-prefix
   namespace: default
+
+additionalVolumes:
+  - name: acme-json
+    secret:
+      secretName: acme-json-secret
+
+additionalVolumeMounts:
+  - name: acme-json
+    mountPath: /data/acme.json
+    subPath: acme.json
