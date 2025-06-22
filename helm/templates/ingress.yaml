@@ -1,18 +1,39 @@
-{{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: django-react-ingress
+# Name the Ingress resource
+  name: cvdswz-ingress
+  annotations:
+    # Use Traefik as the Ingress controller
+    kubernetes.io/ingress.class: traefik
+    # Add Cert-Manager SSL certificates as the name of the ClusterIssuer resource
+    cert-manager.io/cluster-issuer: letsencrypt-dswz-certificate
 spec:
+  # TLS configuration for HTTPS
+  tls:
+    # TLS secretName used on ClusterIssuer
+    - secretName: cvdswz.letsencrypt.key.tls
+      hosts:
+        # Replace with your domain name
+        - cv.dswz.ru
+  # Create Ingress routing rules
   rules:
-    - host: {{ .Values.ingress.host }}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: django-react-app-svc
-                port:
-                  number: {{ .Values.service.port }}
-{{- end }}
+  # Replace with your domain name
+  - host: cv.dswz.ru
+    http:
+      paths:
+        - path: /api
+          pathType: Prefix
+          backend:
+            service:
+              name: cv-app-django-backend
+              port:
+                number: 8000
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: cv-app-react-frontend
+              port:
+                number: 80
+
