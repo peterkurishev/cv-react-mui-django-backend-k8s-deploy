@@ -1,0 +1,32 @@
+{
+  "about": "Краткое описание...",
+  "experience": [
+    {
+      "company": "Компания 1",
+      "position": "Должность",
+      "duration": "2020-2023",
+      "description": "Описание..."
+    },
+    {
+      "company": "Компания 1",
+      "position": "Должность",
+      "duration": "2020-2023",
+      "description": "Описание..."
+    }
+  ],
+  "education": [
+    {
+      "institution": "Университет",
+      "degree": "Бакалавр",
+      "field": "Информатика",
+      "year": "2020"
+    }
+  ],
+  "skills": ["React", "TypeScript", "MUI"],
+  "contact": {
+    "email": "user@example.com",
+    "phone": "+7 (123) 456-78-90",
+    "linkedin": "linkedin.com/in/user",
+    "github": "github.com/user"
+  }
+}
