@@ -2,7 +2,7 @@ pipeline {
     agent {
         kubernetes {
             // Используем pod с Docker для сборки
-            yaml '''
+        yaml '''
 apiVersion: v1
 kind: Pod
 spec:
@@ -10,17 +10,20 @@ spec:
   - name: jnlp
     image: jenkins/inbound-agent:latest
     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
-  - name: docker
-    image: docker:latest
-    command: ['cat']
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:latest
+    command: ["/busybox/cat"]
     tty: true
     volumeMounts:
-    - name: docker-sock
-      mountPath: /var/run/docker.sock
+      - name: kaniko-secret
+        mountPath: /kaniko/.docker
   volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
+    - name: kaniko-secret
+      secret:
+        secretName: docker-config
+        items:
+          - key: .dockerconfigjson
+            path: config.json
 '''
         }
     }
