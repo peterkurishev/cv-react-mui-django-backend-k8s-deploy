@@ -6,5 +6,5 @@ from django.shortcuts import render
 # Create your views here.
 
 def message(request):
-    r = randint(0,10000)
+    r = randint(0,10000)+1
     return HttpResponse('{"message": "Test'+str(r)+' "}')
