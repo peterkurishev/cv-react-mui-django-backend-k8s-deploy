@@ -2,7 +2,7 @@ global:
   prefix: cv-app
 
 backend:
-  replicaCount: 3
+  replicaCount: 2
   image:
     repository: cr.selcloud.ru/dswz/cv-backend
     tag: 0.8.7
