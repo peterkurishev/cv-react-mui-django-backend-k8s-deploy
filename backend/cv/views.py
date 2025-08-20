@@ -7,4 +7,4 @@ from django.shortcuts import render
 
 def message(request):
     r = randint(0,10000)+1
-    return HttpResponse('{"message": "Test'+str(r)+' "}')
+    return HttpResponse('{"message": "Test'+str(r)+'!"}')
