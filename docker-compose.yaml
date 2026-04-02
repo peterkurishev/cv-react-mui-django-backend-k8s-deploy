@@ -17,6 +17,7 @@ services:
       - ./backend:/app
     environment:
       - DATABASE_URL=postgres://myuser:mypassword@db:5432/mydb
+      - DJANGO_DEBUG=true
       - PYTHONUNBUFFERED=1
     expose:
       - "8000"

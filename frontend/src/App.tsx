@@ -12,7 +12,8 @@ function App() {
   useEffect(() => {
     const fetchResume = async () => {
       try {
-        const res = await axios.get<Resume>('https://cv.dswz.ru/api/message');
+        const apiUrl = process.env.REACT_APP_API_URL || '/api/message';
+        const res = await axios.get<Resume>(apiUrl);
         setResume(res.data);
       } catch (error) {
         setError('Не удалось загрузить данные');
