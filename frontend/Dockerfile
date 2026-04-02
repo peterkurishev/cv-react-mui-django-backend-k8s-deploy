@@ -1,5 +1,11 @@
-FROM nginx:1.23-alpine
-COPY build /usr/share/nginx/html
+FROM node:18-alpine
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
 
 # FROM node:18-alpine
 # #FROM node:18-alpine as build
