@@ -1,15 +1,15 @@
 # Helm Chart: CV Application
 
-Helm chart for deploying the CV application (Django backend + React frontend) to any Kubernetes cluster with TLS via cert-manager.
+Helm-чарт для развертывания приложения CV (Django backend + React frontend) в любом Kubernetes-кластере с TLS через cert-manager.
 
-## Prerequisites
+## Требования
 
-- Kubernetes cluster (K3s, K8s, EKS, GKE, etc.)
+- Kubernetes-кластер (K3s, K8s, EKS, GKE и т.д.)
 - Helm 3
-- Ingress controller installed: **Traefik** or **Nginx Ingress**
-- [cert-manager](https://cert-manager.io/docs/installation/) installed (for automatic HTTPS)
+- Установленный ingress-контроллер: **Traefik** или **Nginx Ingress**
+- Установленный [cert-manager](https://cert-manager.io/docs/installation/) (для автоматического HTTPS)
 
-### Installing cert-manager
+### Установка cert-manager
 
 ```bash
 helm repo add jetstack https://charts.jetstack.io
@@ -20,7 +20,7 @@ helm install cert-manager jetstack/cert-manager \
   --set crds.enabled=true
 ```
 
-## Quick Start
+## Быстрый старт
 
 ```bash
 helm upgrade --install cv-app ./helm \
@@ -28,13 +28,13 @@ helm upgrade --install cv-app ./helm \
   --set certManager.email=admin@example.com
 ```
 
-The application will be available at `https://cv.example.com`.
+Приложение будет доступно по адресу `https://cv.example.com`.
 
-## Configuration
+## Настройка
 
-### Ingress Controller
+### Ingress-контроллер
 
-By default the chart uses **Traefik**. To use **Nginx Ingress**:
+По умолчанию чарт использует **Traefik**. Для использования **Nginx Ingress**:
 
 ```bash
 helm upgrade --install cv-app ./helm \
@@ -45,9 +45,9 @@ helm upgrade --install cv-app ./helm \
 
 ### TLS / cert-manager
 
-The chart creates a `ClusterIssuer` for Let's Encrypt and configures TLS automatically.
+Чарт автоматически создает `ClusterIssuer` для Let's Encrypt и настраивает TLS.
 
-**Staging certificates** (for testing, avoids Let's Encrypt rate limits):
+**Staging-сертификаты** (для тестирования, без риска превысить лимиты Let's Encrypt):
 
 ```bash
 helm upgrade --install cv-app ./helm \
@@ -56,7 +56,7 @@ helm upgrade --install cv-app ./helm \
   --set certManager.production=false
 ```
 
-**Using an existing ClusterIssuer** (if you already have one in the cluster):
+**Использование существующего ClusterIssuer** (если в кластере уже есть свой):
 
 ```bash
 helm upgrade --install cv-app ./helm \
@@ -65,7 +65,7 @@ helm upgrade --install cv-app ./helm \
   --set certManager.clusterIssuerName=my-existing-issuer
 ```
 
-**Without TLS** (e.g., local development with port-forward):
+**Без TLS** (например, для локальной разработки через port-forward):
 
 ```bash
 helm upgrade --install cv-app ./helm \
@@ -74,7 +74,7 @@ helm upgrade --install cv-app ./helm \
   --set certManager.enabled=false
 ```
 
-### Custom Images
+### Собственные образы
 
 ```bash
 helm upgrade --install cv-app ./helm \
@@ -86,7 +86,7 @@ helm upgrade --install cv-app ./helm \
   --set frontend.image.tag=1.0.0
 ```
 
-### Scaling
+### Масштабирование
 
 ```bash
 helm upgrade --install cv-app ./helm \
@@ -96,9 +96,9 @@ helm upgrade --install cv-app ./helm \
   --set frontend.replicaCount=3
 ```
 
-## Using a Values File
+## Использование файла значений
 
-For complex configurations, create a custom values file instead of `--set` flags:
+Для сложных конфигураций удобнее создать отдельный файл значений вместо множества флагов `--set`:
 
 ```yaml
 # my-values.yaml
@@ -128,50 +128,50 @@ frontend:
 helm upgrade --install cv-app ./helm -f my-values.yaml
 ```
 
-## All Parameters
+## Все параметры
 
-| Parameter | Description | Default |
+| Параметр | Описание | По умолчанию |
 |---|---|---|
-| `domain` | Application domain name | `cv.example.com` |
-| `global.prefix` | Resource name prefix | `cv-app` |
-| `ingress.enabled` | Enable ingress | `true` |
-| `ingress.controller` | Ingress controller: `traefik` or `nginx` | `traefik` |
-| `ingress.annotations` | Additional ingress annotations | `{}` |
-| `ingress.tls.enabled` | Enable TLS | `true` |
-| `certManager.enabled` | Enable cert-manager annotations | `true` |
-| `certManager.createClusterIssuer` | Create a ClusterIssuer resource | `true` |
-| `certManager.clusterIssuerName` | ClusterIssuer name | `letsencrypt-prod` |
-| `certManager.email` | Email for Let's Encrypt | `user@example.com` |
-| `certManager.production` | Use production Let's Encrypt server | `true` |
-| `traefik.createMiddleware` | Create Traefik stripPrefix middleware | `true` |
-| `backend.replicaCount` | Backend pod replicas | `2` |
-| `backend.image.repository` | Backend image | `cr.selcloud.ru/dswz/cv-backend` |
-| `backend.image.tag` | Backend image tag | `0.8.7` |
-| `frontend.replicaCount` | Frontend pod replicas | `2` |
-| `frontend.image.repository` | Frontend image | `cr.selcloud.ru/dswz/cv-frontend` |
-| `frontend.image.tag` | Frontend image tag | `0.8.7` |
+| `domain` | Доменное имя приложения | `cv.example.com` |
+| `global.prefix` | Префикс имен ресурсов | `cv-app` |
+| `ingress.enabled` | Включить ingress | `true` |
+| `ingress.controller` | Ingress-контроллер: `traefik` или `nginx` | `traefik` |
+| `ingress.annotations` | Дополнительные аннотации ingress | `{}` |
+| `ingress.tls.enabled` | Включить TLS | `true` |
+| `certManager.enabled` | Включить аннотации cert-manager | `true` |
+| `certManager.createClusterIssuer` | Создать ресурс ClusterIssuer | `true` |
+| `certManager.clusterIssuerName` | Имя ClusterIssuer | `letsencrypt-prod` |
+| `certManager.email` | Email для регистрации в Let's Encrypt | `user@example.com` |
+| `certManager.production` | Использовать production-сервер Let's Encrypt | `true` |
+| `traefik.createMiddleware` | Создать Traefik middleware для stripPrefix | `true` |
+| `backend.replicaCount` | Количество реплик backend | `2` |
+| `backend.image.repository` | Образ backend | `cr.selcloud.ru/dswz/cv-backend` |
+| `backend.image.tag` | Тег образа backend | `0.8.7` |
+| `frontend.replicaCount` | Количество реплик frontend | `2` |
+| `frontend.image.repository` | Образ frontend | `cr.selcloud.ru/dswz/cv-frontend` |
+| `frontend.image.tag` | Тег образа frontend | `0.8.7` |
 
-## Useful Commands
+## Полезные команды
 
 ```bash
-# Check what will be rendered before deploying
+# Предварительный просмотр манифестов перед развертыванием
 helm template cv-app ./helm -f my-values.yaml
 
-# View deployed release status
+# Статус развернутого релиза
 helm status cv-app
 
-# Check pod status
+# Статус подов
 kubectl get pods -l app=django-backend
 kubectl get pods -l app=react-frontend
 
-# View logs
+# Просмотр логов
 kubectl logs -f -l app=django-backend
 kubectl logs -f -l app=react-frontend
 
-# Check certificate status (cert-manager)
+# Проверка статуса сертификата (cert-manager)
 kubectl get certificates
 kubectl describe certificate cv-app-tls
 
-# Uninstall
+# Удаление
 helm uninstall cv-app
 ```
