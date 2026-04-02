@@ -27,8 +27,8 @@ certManager:
 
 # -- Traefik-specific settings (only used when ingress.controller=traefik)
 traefik:
-  # -- Create Traefik stripPrefix middleware for /api
-  createMiddleware: true
+  # -- Create Traefik stripPrefix middleware for /api (disable if Django URLs include /api prefix)
+  createMiddleware: false
   middleware:
     name: strip-api-prefix
     namespace: default
@@ -42,6 +42,13 @@ backend:
   containerPort: 8000
   service:
     port: 8000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
   readinessProbe:
     path: /api/message
     port: 8000
@@ -62,6 +69,13 @@ frontend:
   containerPort: 80
   service:
     port: 80
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
   readinessProbe:
     path: /
     port: 80

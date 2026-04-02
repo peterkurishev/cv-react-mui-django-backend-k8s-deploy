@@ -16,10 +16,14 @@ spec:
     spec:
       containers:
         - name: react
+          securityContext:
+            allowPrivilegeEscalation: false
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.frontend.containerPort }}
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: {{ .Values.frontend.readinessProbe.path }}

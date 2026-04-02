@@ -16,10 +16,14 @@ spec:
     spec:
       containers:
         - name: django
+          securityContext:
+            allowPrivilegeEscalation: false
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.backend.containerPort }}
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: {{ .Values.backend.readinessProbe.path }}
