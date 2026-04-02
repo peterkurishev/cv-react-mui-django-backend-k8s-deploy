@@ -1,39 +1,44 @@
+{{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-# Name the Ingress resource
-  name: cvdswz-ingress
+  name: {{ .Values.global.prefix }}-ingress
   annotations:
-    # Use Traefik as the Ingress controller
-    kubernetes.io/ingress.class: traefik
-    # Add Cert-Manager SSL certificates as the name of the ClusterIssuer resource
-    cert-manager.io/cluster-issuer: letsencrypt-dswz-certificate
+    {{- if .Values.certManager.enabled }}
+    cert-manager.io/cluster-issuer: {{ .Values.certManager.clusterIssuerName }}
+    {{- end }}
+    {{- if eq .Values.ingress.controller "traefik" }}
+    {{- if .Values.traefik.createMiddleware }}
+    traefik.ingress.kubernetes.io/router.middlewares: {{ .Values.traefik.middleware.namespace }}-{{ .Values.traefik.middleware.name }}@kubernetescrd
+    {{- end }}
+    {{- end }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
-  # TLS configuration for HTTPS
+  ingressClassName: {{ .Values.ingress.controller }}
+  {{- if .Values.ingress.tls.enabled }}
   tls:
-    # TLS secretName used on ClusterIssuer
-    - secretName: cvdswz.letsencrypt.key.tls
+    - secretName: {{ .Values.global.prefix }}-tls
       hosts:
-        # Replace with your domain name
-        - cv.dswz.ru
-  # Create Ingress routing rules
+        - {{ .Values.domain }}
+  {{- end }}
   rules:
-  # Replace with your domain name
-  - host: cv.dswz.ru
-    http:
-      paths:
-        - path: /api
-          pathType: Prefix
-          backend:
-            service:
-              name: cv-app-django-backend
-              port:
-                number: 8000
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: cv-app-react-frontend
-              port:
-                number: 80
-
+    - host: {{ .Values.domain }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "django-backend.fullname" . }}
+                port:
+                  number: {{ .Values.backend.service.port }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "react-frontend.fullname" . }}
+                port:
+                  number: {{ .Values.frontend.service.port }}
+{{- end }}

@@ -1,6 +1,38 @@
 global:
   prefix: cv-app
 
+# -- Domain name for the application
+domain: cv.example.com
+
+# -- Ingress controller configuration
+ingress:
+  enabled: true
+  # -- Ingress controller type: "traefik" or "nginx"
+  controller: traefik
+  annotations: {}
+  tls:
+    enabled: true
+
+# -- cert-manager configuration for automatic TLS certificates
+certManager:
+  enabled: true
+  # -- Create a ClusterIssuer resource (disable if you already have one)
+  createClusterIssuer: true
+  # -- Name of the ClusterIssuer to use (must match if createClusterIssuer is false)
+  clusterIssuerName: letsencrypt-prod
+  # -- Email for Let's Encrypt registration
+  email: user@example.com
+  # -- Use Let's Encrypt production server (false = staging for testing)
+  production: true
+
+# -- Traefik-specific settings (only used when ingress.controller=traefik)
+traefik:
+  # -- Create Traefik stripPrefix middleware for /api
+  createMiddleware: true
+  middleware:
+    name: strip-api-prefix
+    namespace: default
+
 backend:
   replicaCount: 2
   image:
@@ -40,33 +72,3 @@ frontend:
     port: 80
     initialDelaySeconds: 10
     periodSeconds: 10
-
-ingress:
-  enabled: true
-  className: traefik
-  host: cv.dswz.ru  # Укажите ваш домен
-  annotations:
-    traefik.ingress.kubernetes.io/router.middlewares: default-strip-api-prefix@kubernetescrd
-  path: / 
-  tls:
-    enabled: true
-    letsEncrypt:
-      enabled: true
-      email: peter@kurishev.ru  # Email для Let's Encrypt
-      production: false  # true для продакшена, false для теста (staging)
-    
-
-middleware:
-  enabled: true
-  name: strip-api-prefix
-  namespace: default
-
-additionalVolumes:
-  - name: acme-json
-    secret:
-      secretName: acme-json-secret
-
-additionalVolumeMounts:
-  - name: acme-json
-    mountPath: /data/acme.json
-    subPath: acme.json

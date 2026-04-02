@@ -1,9 +1,9 @@
-{{- if .Values.middleware.enabled }}
+{{- if and (eq .Values.ingress.controller "traefik") .Values.traefik.createMiddleware }}
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: {{ .Values.middleware.name }}
-  namespace: {{ .Values.middleware.namespace }}
+  name: {{ .Values.traefik.middleware.name }}
+  namespace: {{ .Values.traefik.middleware.namespace }}
 spec:
   stripPrefix:
     prefixes:
