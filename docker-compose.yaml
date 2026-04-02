@@ -8,6 +8,11 @@ services:
       POSTGRES_PASSWORD: mypassword
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # Django Backend
   backend:
@@ -18,16 +23,21 @@ services:
     environment:
       - DATABASE_URL=postgres://myuser:mypassword@db:5432/mydb
       - DJANGO_DEBUG=true
+      - DJANGO_ALLOWED_HOSTS=*
+      - CORS_ALLOWED_ORIGINS=http://localhost,http://localhost:3000,http://localhost:80
       - PYTHONUNBUFFERED=1
     expose:
       - "8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   # React Frontend
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: dev
     command: npm start
     volumes:
       - ./frontend:/app

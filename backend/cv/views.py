@@ -1,10 +1,8 @@
 from random import randint
 
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import JsonResponse
 
-# Create your views here.
 
 def message(request):
-    r = randint(0,10000)+1
-    return HttpResponse('{"message": "Test'+str(r)+'!"}')
+    r = randint(0, 10000) + 1
+    return JsonResponse({'message': f'Test{r}!'})

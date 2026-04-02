@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Box, Typography, Container, Grid } from '@mui/material';
+import { Typography, Container, Grid } from '@mui/material';
 import About from './components/About';
 import { Resume } from './types';
 
@@ -38,18 +38,6 @@ function App() {
         <Grid>
           <About content={resume!.about} />
         </Grid>
-        {/* <Grid item xs={12}> */}
-        {/*   <Experience data={resume!.experience} /> */}
-        {/* </Grid> */}
-        {/* <Grid item xs={12}> */}
-        {/*   <Education data={resume!.education} /> */}
-        {/* </Grid> */}
-        {/* <Grid item xs={12}> */}
-        {/*   <Skills data={resume!.skills} /> */}
-        {/* </Grid> */}
-        {/* <Grid item xs={12}> */}
-        {/*   <Contact data={resume!.contact} /> */}
-        {/* </Grid> */}
       </Grid>
     </Container>
   );
