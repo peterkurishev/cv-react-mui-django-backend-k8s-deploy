@@ -56,6 +56,17 @@ ingress:
       production: false  # true для продакшена, false для теста (staging)
     
 
+postgresql:
+  image:
+    repository: postgres
+    tag: "15"
+    pullPolicy: IfNotPresent
+  database: cvdb
+  username: cvuser
+  password: changeme
+  persistence:
+    size: 1Gi
+
 middleware:
   enabled: true
   name: strip-api-prefix
