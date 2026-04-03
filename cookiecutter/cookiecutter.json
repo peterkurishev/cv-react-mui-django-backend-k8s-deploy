@@ -1,0 +1,74 @@
+{
+  "project_name": "My Full Stack App",
+  "project_slug": "{{ cookiecutter.project_name | lower | replace(' ', '-') | replace('_', '-') }}",
+  "project_description": "Full-stack web application with React frontend and Django backend, deployed to Kubernetes via Helm",
+  "author_name": "Your Name",
+  "author_email": "you@example.com",
+  "domain": "app.example.com",
+  "license": ["AGPL-3.0", "MIT", "Apache-2.0", "GPL-3.0", "BSD-3-Clause", "none"],
+
+  "__prompts__": {
+    "project_name": "Project name",
+    "domain": "Production domain name"
+  },
+
+  "python_version": ["3.12", "3.11", "3.10", "3.13"],
+  "node_version": ["18", "20", "22"],
+  "django_version": ["5.2", "5.1", "4.2"],
+  "react_version": ["19", "18"],
+  "mui_version": ["7", "6", "5"],
+
+  "django_project_name": "{{ cookiecutter.project_slug | replace('-', '') }}be",
+  "django_app_name": "core",
+  "api_prefix": "api",
+  "api_endpoint": "message",
+
+  "use_postgres": "y",
+  "postgres_version": ["15", "16", "14", "13"],
+  "postgres_db": "mydb",
+  "postgres_user": "myuser",
+  "postgres_password": "mypassword",
+
+  "docker_registry": "docker.io",
+  "docker_image_prefix": "{{ cookiecutter.project_slug }}",
+  "backend_image_tag": "latest",
+  "frontend_image_tag": "latest",
+
+  "use_sentry": "y",
+  "use_cors": "y",
+  "use_gunicorn": "y",
+  "gunicorn_workers": "3",
+  "gunicorn_timeout": "120",
+
+  "use_nginx_proxy": "y",
+  "nginx_listen_port": "80",
+
+  "use_kubernetes": "y",
+  "k8s_namespace": "default",
+  "helm_chart_name": "{{ cookiecutter.project_slug }}",
+  "helm_chart_version": "0.1.0",
+  "helm_app_version": "1.0.0",
+  "ingress_controller": ["traefik", "nginx"],
+  "use_tls": "y",
+  "use_cert_manager": "y",
+  "cert_manager_email": "{{ cookiecutter.author_email }}",
+  "letsencrypt_production": "y",
+
+  "backend_replicas": "2",
+  "frontend_replicas": "2",
+  "backend_cpu_request": "100m",
+  "backend_memory_request": "256Mi",
+  "backend_cpu_limit": "500m",
+  "backend_memory_limit": "512Mi",
+  "frontend_cpu_request": "50m",
+  "frontend_memory_request": "64Mi",
+  "frontend_cpu_limit": "200m",
+  "frontend_memory_limit": "128Mi",
+
+  "use_github_actions": "y",
+  "use_jenkins": "y",
+  "ci_python_versions": "3.10,3.11,3.12",
+
+  "page_title": "{{ cookiecutter.project_name }}",
+  "locale": ["en", "ru"]
+}

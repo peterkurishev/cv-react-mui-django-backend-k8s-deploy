@@ -1,0 +1,26 @@
+{%- if cookiecutter.use_github_actions == 'y' %}
+name: Pylint
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [{{ cookiecutter.ci_python_versions | replace(",", ", ") }}]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python {% raw %}${{ matrix.python-version }}{% endraw %}
+      uses: actions/setup-python@v3
+      with:
+        python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r backend/requirements.txt
+        pip install pylint
+    - name: Analysing the code with pylint
+      run: |
+        pylint $(git ls-files '*.py')
+{%- endif %}

@@ -1,0 +1,16 @@
+asgiref==3.8.1
+Django=={{ cookiecutter.django_version }}.*
+{%- if cookiecutter.use_cors == 'y' %}
+django-cors-headers==4.7.0
+{%- endif %}
+{%- if cookiecutter.use_postgres == 'y' %}
+dj-database-url==2.3.0
+psycopg2-binary==2.9.10
+{%- endif %}
+{%- if cookiecutter.use_gunicorn == 'y' %}
+gunicorn==23.0.0
+{%- endif %}
+{%- if cookiecutter.use_sentry == 'y' %}
+sentry-sdk==2.31.0
+{%- endif %}
+sqlparse==0.5.3

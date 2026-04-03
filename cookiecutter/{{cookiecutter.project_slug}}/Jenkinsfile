@@ -1,0 +1,89 @@
+{%- if cookiecutter.use_jenkins == 'y' -%}
+pipeline {
+    agent {
+        kubernetes {
+        yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: jnlp
+    image: jenkins/inbound-agent:latest
+    args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:latest
+    command: ["/busybox/cat"]
+    tty: true
+    volumeMounts:
+      - name: kaniko-secret
+        mountPath: /kaniko/.docker
+  volumes:
+    - name: kaniko-secret
+      secret:
+        secretName: docker-config
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+'''
+        }
+    }
+
+    environment {
+        DOCKER_REGISTRY = '{{ cookiecutter.docker_registry }}'
+        DOCKER_CREDENTIALS_ID = 'docker-registry-credentials'
+        IMAGE_NAME = "{{ cookiecutter.docker_image_prefix }}"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                container('docker') {
+                    withCredentials([usernamePassword(
+                        credentialsId: env.DOCKER_CREDENTIALS_ID,
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )]) {
+                        sh """
+                            docker login -u $DOCKER_USER -p $DOCKER_PASS ${env.DOCKER_REGISTRY}
+                        """
+                    }
+
+                    sh """
+                        docker build -t ${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.IMAGE_TAG} .
+                        docker build -t ${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:latest .
+                    """
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                container('docker') {
+                    sh """
+                        docker push ${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.IMAGE_TAG}
+                        docker push ${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:latest
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            container('docker') {
+                sh """
+                    docker rmi ${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.IMAGE_TAG} || true
+                    docker rmi ${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:latest || true
+                """
+            }
+        }
+    }
+}
+{%- endif %}

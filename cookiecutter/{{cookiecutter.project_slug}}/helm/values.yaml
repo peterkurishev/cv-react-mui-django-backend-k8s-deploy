@@ -1,0 +1,83 @@
+global:
+  prefix: {{ cookiecutter.project_slug }}
+
+# -- Domain name for the application
+domain: {{ cookiecutter.domain }}
+
+# -- Ingress controller configuration
+ingress:
+  enabled: true
+  # -- Ingress controller type: "traefik" or "nginx"
+  controller: {{ cookiecutter.ingress_controller }}
+  annotations: {}
+  tls:
+    enabled: {% if cookiecutter.use_tls == 'y' %}true{% else %}false{% endif %}
+
+# -- cert-manager configuration for automatic TLS certificates
+certManager:
+  enabled: {% if cookiecutter.use_cert_manager == 'y' %}true{% else %}false{% endif %}
+  createClusterIssuer: true
+  clusterIssuerName: letsencrypt-prod
+  email: {{ cookiecutter.cert_manager_email }}
+  production: {% if cookiecutter.letsencrypt_production == 'y' %}true{% else %}false{% endif %}
+
+# -- Traefik-specific settings (only used when ingress.controller=traefik)
+traefik:
+  createMiddleware: false
+  middleware:
+    name: strip-api-prefix
+    namespace: {{ cookiecutter.k8s_namespace }}
+
+backend:
+  replicaCount: {{ cookiecutter.backend_replicas }}
+  image:
+    repository: {{ cookiecutter.docker_registry }}/{{ cookiecutter.docker_image_prefix }}-backend
+    tag: {{ cookiecutter.backend_image_tag }}
+    pullPolicy: IfNotPresent
+  containerPort: 8000
+  service:
+    port: 8000
+  resources:
+    requests:
+      cpu: {{ cookiecutter.backend_cpu_request }}
+      memory: {{ cookiecutter.backend_memory_request }}
+    limits:
+      cpu: {{ cookiecutter.backend_cpu_limit }}
+      memory: {{ cookiecutter.backend_memory_limit }}
+  readinessProbe:
+    path: /{{ cookiecutter.api_prefix }}/{{ cookiecutter.api_endpoint }}
+    port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 5
+  livenessProbe:
+    path: /{{ cookiecutter.api_prefix }}/{{ cookiecutter.api_endpoint }}
+    port: 8000
+    initialDelaySeconds: 30
+    periodSeconds: 10
+
+frontend:
+  replicaCount: {{ cookiecutter.frontend_replicas }}
+  image:
+    repository: {{ cookiecutter.docker_registry }}/{{ cookiecutter.docker_image_prefix }}-frontend
+    tag: {{ cookiecutter.frontend_image_tag }}
+    pullPolicy: IfNotPresent
+  containerPort: 80
+  service:
+    port: 80
+  resources:
+    requests:
+      cpu: {{ cookiecutter.frontend_cpu_request }}
+      memory: {{ cookiecutter.frontend_memory_request }}
+    limits:
+      cpu: {{ cookiecutter.frontend_cpu_limit }}
+      memory: {{ cookiecutter.frontend_memory_limit }}
+  readinessProbe:
+    path: /
+    port: 80
+    initialDelaySeconds: 5
+    periodSeconds: 5
+  livenessProbe:
+    path: /
+    port: 80
+    initialDelaySeconds: 10
+    periodSeconds: 10

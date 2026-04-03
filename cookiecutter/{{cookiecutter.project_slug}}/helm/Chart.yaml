@@ -1,0 +1,6 @@
+apiVersion: v2
+name: {{ cookiecutter.helm_chart_name }}
+description: "Helm chart for {{ cookiecutter.project_name }}: Django backend + React frontend with {{ cookiecutter.ingress_controller | capitalize }} ingress and cert-manager TLS"
+version: {{ cookiecutter.helm_chart_version }}
+appVersion: "{{ cookiecutter.helm_app_version }}"
+type: application

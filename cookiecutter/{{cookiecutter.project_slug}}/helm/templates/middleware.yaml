@@ -1,0 +1,11 @@
+{% raw %}{{- if and (eq .Values.ingress.controller "traefik") .Values.traefik.createMiddleware }}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Values.traefik.middleware.name }}
+  namespace: {{ .Values.traefik.middleware.namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - "/{% endraw %}{{ cookiecutter.api_prefix }}{% raw %}"
+{{- end }}{% endraw %}

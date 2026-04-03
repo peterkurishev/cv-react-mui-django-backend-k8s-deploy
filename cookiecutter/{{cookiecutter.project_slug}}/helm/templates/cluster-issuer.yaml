@@ -1,0 +1,20 @@
+{% raw %}{{- if and .Values.certManager.enabled .Values.certManager.createClusterIssuer }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.certManager.clusterIssuerName }}
+spec:
+  acme:
+    {{- if .Values.certManager.production }}
+    server: https://acme-v02.api.letsencrypt.org/directory
+    {{- else }}
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    {{- end }}
+    email: {{ .Values.certManager.email }}
+    privateKeySecretRef:
+      name: {{ .Values.certManager.clusterIssuerName }}-key
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: {{ .Values.ingress.controller }}
+{{- end }}{% endraw %}
